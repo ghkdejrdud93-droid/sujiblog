@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>수지 부동산 블로그 도우미 V0.12</title>
+<title>수지 부동산 블로그 도우미 V0.16</title>
 <style>
   :root{
     --ink:#15171a; --paper:#f7f8fa; --card:#ffffff; --line:#d4d6db;
@@ -220,7 +220,7 @@
 
 <div class="topbar">
   <span class="brand">수지 부동산 <em>블로그 도우미</em></span>
-  <span class="ver">V0.12</span>
+  <span class="ver">V0.16</span>
   <span class="keystat no" id="keystat">키 미설정</span>
   <span class="keystat no" id="sheetstat">시트 미연결</span>
   <button class="keybtn" id="sheetbtn">시트 설정</button>
@@ -280,20 +280,14 @@
       <button id="assistBtn" style="border:none;border-radius:10px;background:var(--accent);color:#fff;padding:11px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;transition:.15s">
         <span style="font-size:15px">✨</span> AI 어시스턴트로 완성하기
       </button>
-      <div style="font-size:11px;color:var(--mut);text-align:center;line-height:1.45">
-        정리 · 맞춤법 · 보완 · 사진 조언 · 제목/태그를 한 번에
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:1px">
-        <button class="act" id="ragBtn" style="border-color:var(--accent-dim);padding:8px 9px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:2px;align-items:stretch">
+        <button class="act" id="ragBtn" style="border-color:var(--accent-dim);padding:8px 9px;min-height:48px;align-items:center;justify-content:flex-start">
           <span class="ai" style="font-size:14px">🔄</span><span class="tx"><b style="font-size:12px">과거 글 참고</b><s style="font-size:10px">비슷한 글로 새 글</s></span>
         </button>
-        <button class="act" id="saveSheetBtn" style="border-color:var(--moss);padding:8px 9px">
+        <button class="act" id="saveSheetBtn" style="border-color:var(--moss);padding:8px 9px;min-height:48px;align-items:center;justify-content:flex-start">
           <span class="ai" style="font-size:14px">📥</span><span class="tx"><b style="font-size:12px">시트에 저장</b><s style="font-size:10px">자산으로 쌓기</s></span>
         </button>
       </div>
-      <button class="act" id="checkBtn" style="border-color:var(--gold);padding:8px 10px;justify-content:center">
-        <span class="ai" style="font-size:14px">🛡️</span><span class="tx"><b style="font-size:12px;color:#7a5a08">저품질 위험 점검</b><s style="font-size:10px">발행 전 광고성·상업성 신호 체크</s></span>
-      </button>
     </div>
     <div id="feedback">
       <div class="placeholder" id="ph">
@@ -335,23 +329,27 @@
   </div>
 </div>
 
-<!-- style register modal -->
+<!-- style modal (등록/관리 모드 전환) -->
 <div class="modal" id="styModal">
   <div class="modalbox">
-    <h3>📚 참고 스타일</h3>
-    <p>마음에 든 블로그 글의 <b>캡처 이미지</b>를 올리면 AI가 <b>구조·톤·문단 패턴만</b> 분석해 저장합니다. 켜둔 스타일이 글 작성에 반영돼요.</p>
+    <h3 id="styModalTitle">📚 참고 스타일</h3>
+    <p id="styModalDesc">마음에 든 블로그 글의 <b>캡처 이미지</b>를 올리면 AI가 <b>구조·톤·문단 패턴만</b> 분석해 저장합니다. 켜둔 스타일이 글 작성에 반영돼요.</p>
 
-    <div style="font-size:12px;font-weight:600;color:var(--mut);margin-bottom:8px">저장된 스타일</div>
-    <div id="styMgrList" style="max-height:200px;overflow-y:auto;margin-bottom:18px"></div>
-
-    <div style="border-top:1px solid var(--line);padding-top:16px">
-      <div style="font-size:12px;font-weight:600;color:var(--mut);margin-bottom:8px">＋ 새 스타일 등록</div>
+    <!-- ── 등록 모드 (등록만) ── -->
+    <div id="styRegisterView">
       <input type="text" id="styName" placeholder="스타일 이름 (예: 깔끔한 시세분석체)" style="font-family:inherit">
       <div id="styImgZone" style="border:1.5px dashed var(--accent-dim);border-radius:10px;padding:18px;text-align:center;font-size:13px;color:var(--accent);cursor:pointer;margin-bottom:10px;background:var(--accent-soft)">
         📷 캡처 이미지 올리기 (클릭 또는 드래그) — 여러 장 가능
         <input type="file" id="styImgInput" accept="image/*" multiple style="display:none">
       </div>
-      <div id="styImgList" style="margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center"></div>
+      <div id="styImgList" style="margin-bottom:8px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center"></div>
+      <div style="text-align:right;margin-bottom:6px"><span id="toManage" style="font-size:12px;color:var(--accent);cursor:pointer;font-weight:600">⚙ 등록된 스타일 관리 →</span></div>
+    </div>
+
+    <!-- ── 관리 모드 (켜기/끄기·삭제만) ── -->
+    <div id="styManageView" style="display:none">
+      <div id="styMgrList" style="max-height:300px;overflow-y:auto;margin-bottom:8px"></div>
+      <div style="text-align:right;margin-bottom:6px"><span id="toRegister" style="font-size:12px;color:var(--accent);cursor:pointer;font-weight:600">＋ 새 스타일 등록 →</span></div>
     </div>
 
     <div class="row">
@@ -378,6 +376,7 @@ const $=id=>document.getElementById(id);
 const LS_KEY='suji_blog_apikey';
 const LS_STYLES='suji_blog_styles';
 const LS_GAS='suji_blog_gasurl';
+const MODEL='claude-sonnet-4-6'; // 사용 모델 ID — 모델 교체 시 이 한 줄만 수정
 let topic='단지 시세·매물 분석';
 let currentDraftId=null; // 현재 편집 중인 임시저장 글의 id (있으면 덮어쓰기)
 
@@ -427,7 +426,7 @@ $('diagBtn').onclick=async()=>{
       method:"POST",
       headers:{"Content-Type":"application/json","x-api-key":k,
         "anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:5,
+      body:JSON.stringify({model:MODEL,max_tokens:5,
         messages:[{role:"user",content:"hi"}]})
     });
     const loading=fb.querySelector('.fbloading');if(loading)loading.remove();
@@ -522,6 +521,10 @@ ${photoHint}
 
 ### 🏷️ 제목·태그 추천
 검색 잘 되는 제목 후보 3개 + 네이버 태그 8개(# 포함).
+
+### 🛡️ 저품질 위험 점검
+완성된 글 기준으로 2026년 네이버 검색(C-Rank, D.I.A.+, 하이퍼클로바X)에서 저품질·광고글로 분류될 위험을 점검하세요. 검사 항목: 상업성 키워드 남발(최저가/추천/할인/급매/문의주세요 등), 연락처·상호·전화번호 본문 반복(말미 1회는 정상), 같은 키워드 과도 반복, 외부 상업 링크 과다, 경험·근거 없는 광고 나열(AI 양산글 의심), 과장·단정 표현, 유사문서 위험.
+먼저 "위험도: 낮음/보통/높음 — 한 줄 이유"를 쓰고, 줄을 바꿔 해당되는 신호만 "[🔴높음/🟡보통/🟢참고] 문제 → 고치는 법" 형식으로 한 줄씩. 없으면 "특별한 위험 신호 없음". 판정은 보수적으로(정보 위주 글에 말미 연락처 1회 정도는 정상).
 ${activeStyleGuide()}
 
 한국어로, 과장·광고성 표현은 피하고(저품질 위험) 작성하세요. 상호명·연락처·전화번호는 본문에 반복하지 말고, 필요하면 글 맨 끝에 한 번만 자연스럽게 두세요. "최저가/추천/급매/문의주세요" 같은 영업 표현은 쓰지 마세요.`;
@@ -531,7 +534,7 @@ ${activeStyleGuide()}
       method:"POST",
       headers:{"Content-Type":"application/json","x-api-key":getKey(),
         "anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2800,
+      body:JSON.stringify({model:MODEL,max_tokens:3600,
         messages:[{role:"user",content:prompt}]})
     });
     if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||('HTTP '+res.status));}
@@ -635,6 +638,32 @@ function renderAssist(out,orig){
     }
   });
 
+  // 저품질 위험 점검 섹션 — 위험도 배지 + 신호 목록
+  const riskSec=extractSection(out,'저품질 위험 점검');
+  if(riskSec){
+    const all=riskSec.split('\n').map(l=>l.replace(/^[\-\*•]\s*/,'').trim()).filter(Boolean);
+    // 첫 줄에서 위험도 추출
+    let lvlLine=all.find(l=>/위험도|낮음|보통|높음/.test(l))||'';
+    let color='#16785d',bg='var(--moss-soft)',label='낮음';
+    if(/높음/.test(lvlLine)){color='#c4541f';bg='#fdf0eb';label='높음';}
+    else if(/보통/.test(lvlLine)){color='#9a6f08';bg='var(--gold-soft)';label='보통';}
+    const reason=lvlLine.replace(/^.*?(낮음|보통|높음)[\s:·\-—]*/,'').trim();
+    let badge='<div style="display:flex;align-items:center;gap:10px;margin:8px 0 10px;padding:11px 13px;border-radius:10px;background:'+bg+';border:1px solid '+color+'">'+
+      '<span style="font-weight:700;font-size:14px;color:'+color+';white-space:nowrap">🚦 위험도 '+label+'</span>'+
+      (reason?'<span style="font-size:12.5px;color:var(--ink);line-height:1.4">'+esc(reason)+'</span>':'')+'</div>';
+    let items='';
+    all.forEach(l=>{
+      if(l===lvlLine)return;
+      if(/특별한 위험 신호 없음|위험 신호 없음/.test(l)){items+='<div class="clnone" style="color:var(--moss)">✓ 특별한 위험 신호가 없어요 👍</div>';return;}
+      let lc=esc(l).replace('🔴','<span style="color:#c4541f">🔴</span>')
+                   .replace('🟡','<span style="color:#9a6f08">🟡</span>')
+                   .replace('🟢','<span style="color:#16785d">🟢</span>');
+      items+='<div class="clitem">'+lc+'</div>';
+    });
+    body+='<div style="font-weight:700;font-size:14px;color:var(--ink);margin:16px 0 7px;padding-top:12px;border-top:1px solid var(--line)">🛡️ 저품질 위험 점검</div>'+
+      badge+(items?'<div class="changelog"><div class="clhead" style="background:#fdf0eb;color:#c4541f">⚠️ 위험 신호</div>'+items+'</div>':'');
+  }
+
   // 섹션 파싱이 전부 실패하면(형식 안 맞으면) 통째로 폴백 렌더
   if(!body.trim()){
     let h=esc(out)
@@ -682,7 +711,7 @@ function renderStyles(){
   // 관리 버튼 (항상 표시)
   const mng=document.createElement('span');
   mng.className='styadd';mng.textContent='⚙ 스타일 관리';mng.style.cssText+=';border-style:solid;border-color:var(--line2);color:var(--mut)';
-  mng.onclick=openStyleModal;
+  mng.onclick=()=>openStyleModal('manage');
   wrap.appendChild(mng);
 }
 
@@ -693,15 +722,33 @@ function activeStyleGuide(){
     on.map(s=>'· '+s.name+': '+s.analysis).join('\n');
 }
 
-/* 스타일 모달 열기 + 리스트 렌더 */
-function openStyleModal(){
-  renderStyleList();
-  $('styName').value='';styImages=[];renderImgList();
+/* 스타일 모달 — 'register'(등록만) / 'manage'(켜기끄기·삭제만) 모드 전환 */
+function setStyleMode(mode){
+  const reg=mode!=='manage';
+  $('styRegisterView').style.display=reg?'block':'none';
+  $('styManageView').style.display=reg?'none':'block';
+  $('stySave').style.display=reg?'block':'none'; // 관리 모드에선 '분석해서 저장' 버튼 숨김
+  if(reg){
+    $('styModalTitle').textContent='📚 새 스타일 등록';
+    $('styModalDesc').innerHTML='마음에 든 블로그 글의 <b>캡처 이미지</b>를 올리면 AI가 <b>구조·톤·문단 패턴만</b> 분석해 저장합니다.';
+  }else{
+    $('styModalTitle').textContent='⚙ 스타일 관리';
+    $('styModalDesc').innerHTML='등록된 스타일을 <b>켜고 끄거나 삭제</b>할 수 있어요. 켜둔 스타일이 글 작성에 반영됩니다.';
+    renderStyleList();
+  }
+}
+function openStyleModal(mode){
+  if(mode==='manage'){
+    setStyleMode('manage');
+  }else{
+    $('styName').value='';styImages=[];renderImgList();
+    setStyleMode('register');
+  }
   $('styModal').classList.add('show');
 }
 function renderStyleList(){
   const list=$('styMgrList');list.innerHTML='';
-  if(!STYLES.length){list.innerHTML='<div style="color:var(--mut2);font-size:13px;padding:8px 2px">아직 등록된 스타일이 없어요. 아래에서 캡처로 등록해보세요.</div>';return;}
+  if(!STYLES.length){list.innerHTML='<div style="color:var(--mut2);font-size:13px;padding:14px 2px;text-align:center">아직 등록된 스타일이 없어요.<br>아래 <b>＋ 새 스타일 등록</b>으로 추가해보세요.</div>';return;}
   STYLES.forEach((s,i)=>{
     const row=document.createElement('div');
     row.style.cssText='border:1px solid var(--line);border-radius:10px;margin-bottom:8px;overflow:hidden';
@@ -791,8 +838,10 @@ function renderImgList(){
 }
 setupImgZone();
 
-$('styAdd').onclick=openStyleModal;
+$('styAdd').onclick=()=>openStyleModal('register');
 $('styCancel').onclick=()=>$('styModal').classList.remove('show');
+$('toManage').onclick=()=>setStyleMode('manage');
+$('toRegister').onclick=()=>{$('styName').value='';styImages=[];renderImgList();setStyleMode('register');};
 $('stySave').onclick=async()=>{
   const name=$('styName').value.trim()||('스타일 '+(STYLES.length+1));
   if(!getKey()){toast('먼저 API 키를 설정해주세요 🔑');return;}
@@ -808,7 +857,7 @@ $('stySave').onclick=async()=>{
       method:"POST",
       headers:{"Content-Type":"application/json","x-api-key":getKey(),
         "anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:500,
+      body:JSON.stringify({model:MODEL,max_tokens:500,
         messages:[{role:"user",content:content}]})
     });
     if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||('HTTP '+res.status));}
@@ -823,6 +872,7 @@ $('stySave').onclick=async()=>{
     renderStyles();renderStyleList();
     $('styName').value='';styImages=[];renderImgList();
     toast('"'+name+'" 스타일을 저장했어요 ✓');
+    setStyleMode('manage'); // 등록 끝나면 관리 화면으로 넘겨 방금 등록한 걸 보여줌
   }catch(err){
     toast('분석 실패: '+err.message);
     alert('스타일 분석 실패\n\n'+err.message+'\n\n※ 캡처가 너무 크면 자동으로 줄여서 보내지만, 그래도 실패하면 캡처를 2~3장 이하로 나눠 올려보세요. API 키 잔액도 확인해 주세요.');
@@ -1040,7 +1090,7 @@ ${activeStyleGuide()}
       method:"POST",
       headers:{"Content-Type":"application/json","x-api-key":getKey(),
         "anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,
+      body:JSON.stringify({model:MODEL,max_tokens:2000,
         messages:[{role:"user",content:prompt}]})
     });
     if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||('HTTP '+res.status));}
@@ -1060,102 +1110,6 @@ ${activeStyleGuide()}
   }
 };
 
-/* ── 저품질 위험 점검 (발행 전 광고성·상업성 신호 스캔) ── */
-$('checkBtn').onclick=async()=>{
-  if(!getKey()){toast('먼저 API 키를 설정해주세요 🔑');$('modal').classList.add('show');return;}
-  const text=$('editor').value.trim();
-  const title=$('titleInput').value.trim();
-  if(!text){toast('점검할 글을 먼저 써주세요');return;}
-
-  $('ph')&&($('ph').style.display='none');
-  const card=document.createElement('div');card.className='fbcard';
-  card.innerHTML=`<div class="fbhead" style="color:#7a5a08">🛡️ 저품질 위험 점검<span class="x">✕</span></div>
-    <div class="fbbody"><div class="fbloading"><div class="spin"></div>네이버 알고리즘 관점에서 위험 신호를 살피는 중…</div></div>`;
-  $('feedback').prepend(card);
-  card.querySelector('.x').onclick=()=>card.remove();
-  const fbody=card.querySelector('.fbbody');
-
-  const prompt=`당신은 2026년 네이버 검색 알고리즘(C-Rank, D.I.A.+, 하이퍼클로바X)을 깊이 이해하는 부동산 블로그 품질 검수자입니다. 아래 글이 네이버에서 저품질·광고글로 분류될 위험이 있는지 점검합니다.
-
-네이버가 부정 신호로 보는 항목(이 기준으로 검사):
-1) 상업성 키워드 남발 — "최저가/추천/할인/급매/문의주세요/연락주세요/전화주세요" 등 영업 표현 반복
-2) 연락처·상호·전화번호가 본문 곳곳에 반복 노출 (글 말미 1회는 정상, 본문 반복은 위험)
-3) 같은 키워드 과도 반복(10회 이상) / 기계적 패턴
-4) 외부 상업 링크·제휴 링크 과다
-5) 경험·근거 없이 광고 문구만 나열(진정성 부족) — AI 양산글로 보일 위험
-6) 과장·단정 표현("무조건/확실히/100%/꼭 오릅니다") 및 미확인 수치 단정
-7) 유사문서 위험(다른 글과 똑같은 문장·구조 반복)
-
-[제목] ${title||'(없음)'}
-[본문]
-${text}
-
-아래 형식으로 한국어로 출력하세요:
-
-### 🚦 종합 위험도
-"낮음 / 보통 / 높음" 중 하나 + 한 줄 이유.
-
-### ⚠️ 발견된 위험 신호
-위 항목 중 해당되는 것만, 한 줄에 하나씩 "[위험도] 문제 → 어디가/왜 → 고치는 법" 형식으로. 위험도는 🔴높음/🟡보통/🟢참고 로 표시. 없으면 "특별한 위험 신호 없음".
-
-### ✏️ 권장 수정안
-가장 시급한 것 위주로, 바꿔 쓸 구체적 표현 예시 2~3개.
-
-판정은 보수적으로(과하게 겁주지 말 것). 정보 위주 글에 연락처가 말미에 한 번 있는 정도는 정상으로 보세요.`;
-
-  try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{"Content-Type":"application/json","x-api-key":getKey(),
-        "anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1400,
-        messages:[{role:"user",content:prompt}]})
-    });
-    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||('HTTP '+res.status));}
-    const data=await res.json();
-    const out=data.content.map(i=>i.type==="text"?i.text:"").join("\n").trim();
-    fbody.innerHTML=renderCheck(out);
-  }catch(err){
-    fbody.innerHTML='<span style="color:var(--warn)">오류: '+err.message+'</span>';
-    alert('점검 실패\n\n'+err.message);
-  }
-};
-
-/* 위험 점검 결과 렌더 — 종합 위험도 배지 + 신호 목록 */
-function renderCheck(out){
-  const lvl=extractSection(out,'종합 위험도');
-  let badge='';
-  if(lvl){
-    let color='#16785d',bg='var(--moss-soft)',label='낮음';
-    if(/높음/.test(lvl)){color='#c4541f';bg='#fdf0eb';label='높음';}
-    else if(/보통/.test(lvl)){color='#9a6f08';bg='var(--gold-soft)';label='보통';}
-    const reason=lvl.replace(/^[^\n]*?(낮음|보통|높음)[\s:·\-]*/,'').trim();
-    badge='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:11px 13px;border-radius:10px;background:'+bg+';border:1px solid '+color+'">'+
-      '<span style="font-weight:700;font-size:14px;color:'+color+'">🚦 위험도 '+label+'</span>'+
-      (reason?'<span style="font-size:12.5px;color:var(--ink);line-height:1.4">'+esc(reason)+'</span>':'')+'</div>';
-  }
-  let body=badge;
-  const sig=extractSection(out,'발견된 위험 신호');
-  if(sig){
-    const lines=sig.split('\n').map(l=>l.replace(/^[\-\*•]\s*/,'').trim()).filter(Boolean);
-    let items='';
-    lines.forEach(l=>{
-      if(/특별한 위험 신호 없음|위험 신호 없음/.test(l)){items+='<div class="clnone" style="color:var(--moss)">✓ 특별한 위험 신호가 없어요 — 안전하게 쓰셨네요 👍</div>';return;}
-      let lc=esc(l).replace('🔴','<span style="color:#c4541f">🔴</span>')
-                   .replace('🟡','<span style="color:#9a6f08">🟡</span>')
-                   .replace('🟢','<span style="color:#16785d">🟢</span>');
-      items+='<div class="clitem">'+lc+'</div>';
-    });
-    body+='<div class="changelog"><div class="clhead" style="background:#fdf0eb;color:#c4541f">⚠️ 발견된 위험 신호</div>'+items+'</div>';
-  }
-  const fix=extractSection(out,'권장 수정안');
-  if(fix){
-    body+='<div style="font-weight:700;font-size:14px;color:var(--ink);margin:16px 0 7px;padding-top:12px;border-top:1px solid var(--line)">✏️ 권장 수정안</div>'+
-      '<div style="white-space:pre-wrap;line-height:1.7">'+esc(fix)+'</div>';
-  }
-  if(!body.trim())return '<div style="white-space:pre-wrap;line-height:1.7">'+esc(out)+'</div>';
-  return body;
-}
 $('photoBtn').onclick=async()=>{
   if(!getGas()){toast('먼저 시트를 연결해주세요 📊');$('sheetModal').classList.add('show');return;}
   const panel=$('photoPanel'),grid=$('photoGrid');
